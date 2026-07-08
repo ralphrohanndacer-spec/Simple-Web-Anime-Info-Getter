@@ -1,17 +1,29 @@
-const baseUrl = "https://api.jikan.moe/v4/anime";
-
-const tvBtn = document.getElementById("tvBtn");
-const movieBtn = document.getElementById("movieBtn");
-const ovaBtn = document.getElementById("ovaBtn");
-
-const imageResult = document.querySelector("#imageResult");
-const imageDialog = document.querySelector("dialog");
-const dialogContainer = document.querySelector(".dialogContainer");
-const imageUrl = document.getElementById("imageUrl");
-const infoResult = document.querySelector("#infoResult");
-const infoTitle = document.getElementById("title");
-
-const buttons = [tvBtn, movieBtn, ovaBtn];
+const baseUrl = "https://kitsu.io/api/edge/anime";
+const buttons = [
+    document.getElementById("tvBtn"),
+    document.getElementById("movieBtn"),
+    document.getElementById("ovaBtn")
+];
+const displayElements = {
+    imageResult: document.querySelector("#imageResult"),
+    imageDialog: document.querySelector("dialog"),
+    dialogContainer: document.querySelector(".dialogContainer"),
+    imageUrl: document.getElementById("imageUrl"),
+    infoDialog: document.getElementById("infoDialog"),
+    infoResult: document.querySelector("#infoResult"),
+    infoTitle: document.getElementById("title"),
+};
+const text = {
+    title: document.getElementById("title"),
+    engTitle: document.getElementById("engTitle"),
+    japTitle: document.getElementById("japTitle"),
+    releasedDate: document.getElementById("releasedDate"),
+    score: document.getElementById("score"),
+    episodes: document.getElementById("episodes"),
+    status: document.getElementById("status"),
+    malId: document.getElementById("malId"),
+    synopsis: document.getElementById("synopsis")
+};
 let type;
 
 
@@ -31,40 +43,43 @@ for(let button of buttons){
 
         if(animeTitle){
             const params = new URLSearchParams({
-                q: animeTitle,
-                type: type,
-                limit: 1
+                "filter[text]": animeTitle,
+                "page[limit]": 10,
             })
             const url = `${baseUrl}?${params.toString()}`
             try{
+                button.textContent = "◌";
+                displayElements.imageResult.textContent = "◌";
                 const data = await getAnimeData(url);
                 displayAnimeInfo(data);
             }
             catch(error){
                 clearContents();
-                infoTitle.style.color = "red";
-                infoTitle.textContent = error.message;
+                displayElements.infoTitle.style.color = "red";
+                displayElements.infoTitle.textContent = error.message;
             }
-
+            finally{
+                button.textContent = type.toUpperCase();
+                displayElements.imageResult.textContent = "";
+            }
         }
         else{
-            infoTitle.style.color = "red";
             clearContents();
-            infoTitle.textContent = "Enter an anime title first!";
+            displayElements.infoTitle.style.color = "red";
+            displayElements.infoTitle.textContent = "Enter an anime title first!";
         }
-
     })
 }
 
 
-imageResult.addEventListener("click", event => {
-    imageDialog.showModal();
+displayElements.imageResult.addEventListener("click", event => {
+    displayElements.imageDialog.showModal();
 })
 
 
-imageDialog.addEventListener("click", (e) => {
-    if(!dialogContainer.contains(e.target)){
-        imageDialog.close();
+displayElements.imageDialog.addEventListener("click", (e) => {
+    if(!displayElements.dialogContainer.contains(e.target)){
+        displayElements.imageDialog.close();
     }
 })
 
@@ -76,43 +91,33 @@ async function getAnimeData(url){
     }
     const data = await response.json();
 
-    if (data.data.length === 0){
+    const anime = data.data.find(({ attributes }) =>
+        attributes.showType?.toLowerCase() === type
+    );
+
+    if (!anime){
         throw new Error(`Anime ${type} not found.`);
     }
-    const anime = data.data[0];
 
     //Extract and format data
-    const rawDate = anime.aired?.from;
-  
-    return {title: anime.title ?? "Unavailable",
-            engTitle: anime.title_english ?? "Unavailable",
-            japTitle: anime.title_japanese ?? "Unavailable",
-            releasedDate: (rawDate) ? rawDate.split("T")[0] : "Unavailable",
-            score: anime.score ?? "Unavailable",
-            episodes: anime.episodes ?? "Unavailable",
-            themes: anime.themes[0]?.name ?? "Unavailable",
-            source: anime.source ?? "Unavailable",
-            status: anime.status ?? "Unavailable",
-            malId: anime.mal_id ?? "Unavailable",
-            synopsis: anime.synopsis ?? "Unavailable",
-            imageUrl: anime.images.jpg.large_image_url ?? "Unavailable"
+    return {title: anime.attributes.canonicalTitle ?? "Unavailable",
+            engTitle: anime.attributes.titles?.en ?? "Unavailable",
+            japTitle: anime.attributes.titles?.ja_jp ?? "Unavailable",
+            releasedDate: anime.attributes.startDate ?? "Unavailable",
+            score: anime.attributes.averageRating? (Number(anime.attributes.averageRating) / 10).toFixed(2): "Unavailable",
+            episodes: anime.attributes.episodeCount ?? "Unavailable",
+            status: anime.attributes.status ?? "Unavailable",
+            malId: anime.id ?? "Unavailable",
+            synopsis: anime.attributes.synopsis ?? "Unavailable",
+            imageUrl: anime.attributes.posterImage.original ?? "Unavailable"
     };
 }
 
 
 function displayAnimeInfo(data){
-    //Get elements
-    let title = document.getElementById("title");
-    let engTitle = document.getElementById("engTitle");
-    let japTitle = document.getElementById("japTitle");
-    let releasedDate = document.getElementById("releasedDate");
-    let score = document.getElementById("score");
-    let episodes = document.getElementById("episodes");
-    let themes = document.getElementById("themes");
-    let source = document.getElementById("source");
-    let status = document.getElementById("status");
-    let malId = document.getElementById("malId");
-    let synopsis = document.getElementById("synopsis");
+    
+    const imageResult = displayElements.imageResult;
+    const imageUrl = displayElements.imageUrl;
 
     if(data.imageUrl !== "Unavailable"){
         document.body.classList.add("setBodyBackgroundImage")
@@ -131,42 +136,38 @@ function displayAnimeInfo(data){
         imageUrl.target = "_self";
     }
 
+    text.title.textContent = data.title;
+    text.title.style.color = "hsl(2, 84%, 57%)";
+    text.engTitle.textContent = data.engTitle;
+    text.japTitle.textContent = data.japTitle;
+    text.releasedDate.textContent = data.releasedDate;
+    text.score.textContent = "⭐ " + data.score;
+    text.episodes.textContent = data.episodes;
+    text.status.textContent = data.status;
+    text.malId.textContent = data.malId;
+    text.synopsis.textContent = data.synopsis;
 
-    title.textContent = data.title;
-    title.style.color = "hsl(2, 84%, 57%)";
-
-    engTitle.textContent = data.engTitle;
-    japTitle.textContent = data.japTitle;
-    releasedDate.textContent = data.releasedDate;
-    score.textContent = "⭐ " + data.score;
-    episodes.textContent = data.episodes;
-    themes.textContent = data.themes;
-    source.textContent = data.source;
-    status.textContent = data.status;
-    malId.textContent = data.malId;
-    synopsis.textContent = data.synopsis;
+    displayElements.infoDialog.innerHTML = displayElements.infoResult.innerHTML;
 }
 
 
-function displayErrorMessage(status){
-    infoTitle.style.color = "red";
-    switch(status){
+function displayErrorMessage(statusCode){
+    displayElements.infoTitle.style.color = "red";
+    switch(statusCode){
         case 304:
             return "You have the latest data (Cache Validation response)";
         case 400:
             return "You've made an invalid request. Recheck documentation";
+        case 401:
+            return "Unauthorized - invalid or no authentication details provided";
         case 404:
-            return "The resource was not found or MyAnimeList responded with a 404";
-        case 405:
-            return "Requested Method is not supported for resource. Only GET requests are allowed"; 
-        case 429:
-            return "You are being rate limited by Jikan or MyAnimeList is rate-limiting our servers (specified in the error response)";
+            return "The resource was not found.";
+        case 406:
+            return "Not Acceptable - invalid Accept header";
         case 500:
-            return "Something didn't work. Try again later.";
-        case 503:
-            return "In most cases this is intentionally done if the service is down for maintenance.";
+            return "Server Error";
         default:
-            return `HTTP Error Occurred: Status code: ${status}`; 
+            return `HTTP Error Occurred: Status code: ${statusCode}`; 
     }
 }
 
@@ -176,7 +177,7 @@ function clearContents(){
     document.querySelectorAll(".resultElements span").forEach(span => {
     span.textContent = "";
     });
-    imageResult.style.backgroundImage = "";
-    imageUrl.href = "";
-    imageUrl.target = "_self";
+    displayElements.imageResult.style.backgroundImage = "";
+    displayElements.imageUrl.href = "";
+    displayElements.imageUrl.target = "_self";
 }

@@ -1,100 +1,109 @@
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-body{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
-.container{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 600px;
-    align-items: center;
-    padding: 15px;
-    border: 1px solid;
-    border-radius: 10px;
-    backdrop-filter: blur(30px);
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 600px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid;
+  border-radius: 10px;
+  backdrop-filter: blur(30px);
 }
-.inputElements{
-    display: flex;
-    gap: 10px;
-    width: 100%;
+.inputElements {
+  display: flex;
+  gap: 10px;
+  width: 100%;
 }
-#titleInput{
-    width: 100%;
+#titleInput {
+  width: 100%;
 }
-.inputElements input, .inputElements button{
-    font-size: 1.25rem;
-    padding: 5px;
-    border-radius: 10px;
-    background: transparent;
+.inputElements input,
+.inputElements button {
+  font-size: 1.25rem;
+  padding: 5px;
+  border-radius: 10px;
+  background: transparent;
 }
-#titleInput:hover{
-    border-color: hsla(0, 0%, 0%, 0.6);
-    outline: none;
+#titleInput:hover {
+  border-color: hsla(0, 0%, 0%, 0.6);
+  outline: none;
 }
-.inputElements button{
-    cursor: pointer;
+.inputElements button {
+  cursor: pointer;
 }
-.resultElements{
-    display: grid;
-    grid-template-columns: 5fr 5fr;
-    gap: 10px;
-    width: 100%;
-    height: 400px;
-    margin-top: 10px;
-    padding: 10px
+.resultElements {
+  display: grid;
+  grid-template-columns: 5fr 5fr;
+  gap: 10px;
+  width: 100%;
+  height: 400px;
+  margin-top: 10px;
+  padding: 10px;
 }
-#imageResult, #infoResult{
-    border: 1px solid;
-    border-radius: 10px;
+#imageResult{
+    font-size: 4rem;
+    text-align: center;
+    font-family: bold;
 }
-#infoResult, #info{
-    padding: 10px;
-    overflow-y: auto;
-    text-align: justify;
-    font-size: 16px;
+#imageResult,
+#infoResult {
+  border: 1px solid;
+  border-radius: 10px;
+}
+#infoResult,
+#infoDialog {
+  padding: 10px;
+  overflow-y: auto;
+  text-align: justify;
+  font-size: 16px;
+  background-color: white;
 }
 dialog {
-    position: fixed; 
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: transparent;
-    padding: 0;
-    border: 1px solid;
-    border-radius: 10px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  padding: 0;
+  border: 1px solid;
+  border-radius: 10px;
 }
-.dialogContainer{
-    display: block;
-    padding: 10px;
-    backdrop-filter: blur(30px);
+.dialogContainer {
+  display: block;
+  padding: 10px;
+  backdrop-filter: blur(30px);
 }
-dialog #imageLink{
-    width: 100%;
-    margin-bottom: 5px;
+dialog #imageLink {
+  width: 100%;
+  margin-bottom: 5px;
 }
-dialog #info{
-    padding: 10px;
-    width: 580px;
-    height: 500px;
-    border: 1px solid;
-    overflow-y: auto;
+dialog #infoDialog {
+  padding: 10px;
+  width: 580px;
+  height: 500px;
+  border: 1px solid;
+  overflow-y: auto;
 }
-.setElementBackgroundImage{
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+.setElementBackgroundImage {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
-.setBodyBackgroundImage{
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+.setBodyBackgroundImage {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
