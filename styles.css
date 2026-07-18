@@ -53,9 +53,10 @@ body {
   padding: 10px;
 }
 #imageResult{
-    font-size: 4rem;
-    text-align: center;
-    font-family: bold;
+  font-size: 4rem;
+  text-align: center;
+  font-family: bold;
+  cursor: pointer;
 }
 #imageResult,
 #infoResult {
@@ -69,6 +70,9 @@ body {
   text-align: justify;
   font-size: 16px;
   background-color: white;
+}
+#infoDialog{
+  overflow-x: auto;
 }
 dialog {
   position: fixed;
